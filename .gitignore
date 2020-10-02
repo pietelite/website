@@ -2,3 +2,4 @@
 project/environmentvar.bat
 project/project/__pycache__/
 venv/
+init_secret.sh
