@@ -1,5 +1,9 @@
+# configuration
 .idea/
-project/environmentvar.bat
-project/project/__pycache__/
+
+# folders
 venv/
+project/__pycache__/
+
+# files
 init_secret.sh
