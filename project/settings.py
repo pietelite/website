@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
-dev = False
+dev_devices = ["DESKTOP-D6F384B"]
+
+import socket
+dev = socket.gethostname() in dev_devices
 
 if dev:
     from .extra_settings_dev import *
