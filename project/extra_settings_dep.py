@@ -1,5 +1,5 @@
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Security
 SESSION_COOKIE_SECURE = False
