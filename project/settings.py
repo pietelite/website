@@ -18,8 +18,6 @@ dev_devices = ["DESKTOP-D6F384B"]
 import socket
 dev = socket.gethostname() in dev_devices
 
-dev = True
-
 if dev:
     from .extra_settings_dev import *
 else:
