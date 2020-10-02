@@ -18,6 +18,8 @@ dev_devices = ["DESKTOP-D6F384B"]
 import socket
 dev = socket.gethostname() in dev_devices
 
+dev = True
+
 if dev:
     from .extra_settings_dev import *
 else:
@@ -125,5 +127,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+STATIC_ROOT = '/home/site/wwwroot/pieter/static/'
 
 STATIC_URL = '/static/'
