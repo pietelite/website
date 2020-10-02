@@ -1,0 +1,205 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pieter Svenson</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'pieter/bootstrap.min.css' %}">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="{% static 'pieter/style.css' %}">
+    <script type="module">
+
+        import animate, {stop} from "/static/pieter/animateplus.js"
+
+        var count = {{ feature_count }}
+        var orbit_radius = {{ orbit_radius }}
+        var offset = {{ feature_size }} / 2
+
+        const stars = () => {
+
+            const list = (length, callback) =>
+                Array.from(new Array(length), (hole, index) => callback(index));
+
+            const random = (min, max) =>
+                Math.random() * (max - min) + min;
+
+            const randomColor = () =>
+                `#${palette[Math.floor(random(0, palette.length))]}`;
+
+            const palette = [
+                "FFFFFF",
+                "C5FEF8",
+                "DAF8FF",
+                "FFFCCA",
+                "FAF6AA",
+                "FADFAA"
+            ];
+
+            const stars = (count, left_fun, top_fun) => list(count, () => {
+            const circle = document.createElement("span");
+            const size = random(1, 3);
+            Object.assign(circle.style, {
+                width: `${size}px`,
+                height: `${size}px`,
+                left: `${left_fun()}vw`,
+                top: `${top_fun()}vw`,
+                background: randomColor()
+                });
+            return circle;
+            });
+
+            const duration = (index) => 100000 + index * 20;
+            const count = 1000;
+
+            const first_stars = stars(count, () => random(0, 100), () => random(0, 100));
+            const perm_stars = stars(count, () => 100, () => random(0, 100));
+
+            document.body.append(...first_stars);
+            document.body.append(...perm_stars);
+
+            // animate first_stars
+            animate({
+                elements: first_stars,
+                easing: "linear",
+                duration: duration,
+                transform: [`translate(0vw, 0vh)`, `translate(-100vw, 0)`]
+            });
+            // animate perm_stars
+            animate({
+                elements: perm_stars,
+                easing: "linear",
+                delay: index => index / count * duration(count/2),
+                duration: duration,
+                loop: true,
+                transform: [`translate(0vw, 0vh)`, `translate(-100vw, 0)`]
+            });
+
+        }
+
+        const spin_start = () => animate({
+            elements: ".feature",
+            duration: 1000,
+            easing: "in-out-cubic",
+            transform: index => [`
+            translate(${-offset}px, ${-offset}px)
+            rotate(${-index/count + 1}turn)
+            translate(${orbit_radius}px)
+            rotate(${index/count}turn)`,`
+
+            translate(${-offset}px, ${-offset}px)
+            rotate(${-index/count}turn)
+            translate(${orbit_radius}px)
+            rotate(${index/count + 1}turn)`
+            ],
+        });
+
+        var orbit_start_progress = 0
+        var orbit_progress = 0
+
+        const orbit = () => animate({
+            elements: ".feature",
+            duration: {{ orbit_speed }},
+            easing: "linear",
+            loop: true,
+            transform: index => [`
+            translate(${-offset}px, ${-offset}px)
+            rotate(${-index/count + 1 - orbit_start_progress}turn)
+            translate(${orbit_radius}px)
+            rotate(${index/count + orbit_start_progress}turn)`,`
+
+            translate(${-offset}px, ${-offset}px)
+            rotate(${-index/count - orbit_start_progress}turn)
+            translate(${orbit_radius}px)
+            rotate(${index/count + 1 + orbit_start_progress}turn)`
+            ],
+            change: p => {
+                if (orbit_progress > 1) {
+                    orbit_progress -= 1
+                } else {
+                    orbit_progress = p + orbit_start_progress
+                }
+            }
+        });
+
+        const init_listeners = () => {
+            var feature_elements = document.getElementsByClassName("feature");
+            for (var i = 0; i < feature_elements.length; i++) {
+                feature_elements[i].feature_index = i;
+                feature_elements[i].addEventListener("mouseover", ({target}) => {
+                    orbit_start_progress = orbit_progress
+                    stop(".feature");
+
+                    animate({
+                        elements: target,
+                        duration: 2000,
+                        transform: [`
+                            translate(${-offset}px, ${-offset}px)
+                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
+                            translate(${orbit_radius}px)
+                            scale(1)
+                            rotate(${target.feature_index/count + orbit_progress}turn)`,`
+
+                            translate(${-offset}px,  ${-offset}px)
+                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
+                            translate(${orbit_radius}px)
+                            scale(1.6)
+                            rotate(${target.feature_index/count + orbit_progress}turn)`
+                        ]
+                    });
+
+                });
+                feature_elements[i].addEventListener("mouseout", ({target}) => {
+                    stop(".feature");
+
+                    animate({
+                        elements: target,
+                        easing: "out-quartic",
+                        duration: 500,
+                        transform: [`
+                            translate(${-offset}px, ${-offset}px)
+                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
+                            translate(${orbit_radius}px)
+                            scale(1.6)
+                            rotate(${target.feature_index/count + orbit_progress}turn)`,`
+
+                            translate(${-offset}px, ${-offset}px)
+                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
+                            translate(${orbit_radius}px)
+                            scale(1)
+                            rotate(${target.feature_index/count + orbit_progress}turn)`
+                        ]
+                    })
+                    .then(options => orbit());
+                });
+            }
+
+        }
+
+        stars();
+        spin_start().then(init_listeners).then(orbit);
+
+
+    </script>
+
+
+</head>
+<body>
+
+<div style="width: 100%; height: 100%; position: fixed">
+    <div style="position: fixed; transform: translate(50vw, 50vh)">
+
+        {% for feature in features %}
+        <a href="{{ feature.destination }}">
+                <img src="{{ feature.image }}" width="{{ feature.width }}px"
+                     height="{{ feature.height }}px" class="feature"
+                     style="position: fixed">
+        </a>
+        {% endfor %}
+
+        <img src="{% static 'pieter/faceless.png' %}" width="200px" height="200px" class="head">
+    </div>
+</div>
+
+</body>
+</html>

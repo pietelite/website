@@ -1,0 +1,4 @@
+.idea/
+project/environmentvar.bat
+project/project/__pycache__/
+venv/

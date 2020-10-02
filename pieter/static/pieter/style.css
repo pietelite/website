@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #151215;
+}
+
+body * {
+  position: absolute;
+}
+
+span {
+  border-radius: 50%;
+  transform-origin: 0 0;
+  opacity: 1;
+  z-index: -1;
+}
+
+img {
+  z-index: 1;
+}
+
+p {
+  width: 100%;
+  top: 45%;
+  text-align: center;
+  font: 500 16px -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #2E2C33;
+  pointer-events: none;
+  -webkit-user-select: none;
+}
+
+.head {
+    margin: auto;
+    border-radius: 100px;
+    border: 2px solid purple;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    background: #151215;
+
+}
