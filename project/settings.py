@@ -138,9 +138,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # http://whitenoise.evans.io/en/stable/django.html#make-sure-staticfiles-is-configured-correctly
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/home/site/wwwroot/pieter/static/'
-]
+STATICFILES_DIRS = []
 
 STATIC_URL = '/static/'
