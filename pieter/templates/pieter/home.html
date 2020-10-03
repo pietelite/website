@@ -13,7 +13,7 @@
 
         var count = {{ feature_count }}
         var orbit_radius = {{ orbit_radius }}
-        var offset = {{ feature_size }} / 2
+        var offset = {{ rough_feature_size }} / 2
 
         const stars = () => {
 
@@ -76,42 +76,34 @@
 
         }
 
-        const spin_start = () => animate({
-            elements: ".feature",
-            duration: 1000,
-            easing: "in-out-cubic",
-            transform: index => [`
-            translate(${-offset}px, ${-offset}px)
-            rotate(${-index/count + 1}turn)
-            translate(${orbit_radius}px)
-            rotate(${index/count}turn)`,`
-
-            translate(${-offset}px, ${-offset}px)
-            rotate(${-index/count}turn)
-            translate(${orbit_radius}px)
-            rotate(${index/count + 1}turn)`
-            ],
-        });
-
-        var orbit_start_progress = 0
-        var orbit_progress = 0
-
-        const orbit = () => animate({
-            elements: ".feature",
-            duration: {{ orbit_speed }},
-            easing: "linear",
-            loop: true,
-            transform: index => [`
+        const transform_feature = index => [`
             translate(${-offset}px, ${-offset}px)
             rotate(${-index/count + 1 - orbit_start_progress}turn)
             translate(${orbit_radius}px)
-            rotate(${index/count + orbit_start_progress}turn)`,`
+            rotate(${index/count + orbit_start_progress}turn`,`
 
             translate(${-offset}px, ${-offset}px)
             rotate(${-index/count - orbit_start_progress}turn)
             translate(${orbit_radius}px)
             rotate(${index/count + 1 + orbit_start_progress}turn)`
-            ],
+        ]
+
+        const spin_start = (css_class) => animate({
+            elements: css_class,
+            duration: 1000,
+            easing: "in-out-cubic",
+            transform: transform_feature,
+        });
+
+        var orbit_start_progress = 0
+        var orbit_progress = 0
+
+        const orbit = (css_class, options={}) => animate({
+            elements: css_class,
+            duration: {{ orbit_speed }},
+            easing: "linear",
+            loop: true,
+            transform: transform_feature,
             change: p => {
                 if (orbit_progress > 1) {
                     orbit_progress -= 1
@@ -128,6 +120,7 @@
                 feature_elements[i].addEventListener("mouseover", ({target}) => {
                     orbit_start_progress = orbit_progress
                     stop(".feature");
+                    stop(".feature-aura");
 
                     animate({
                         elements: target,
@@ -150,6 +143,7 @@
                 });
                 feature_elements[i].addEventListener("mouseout", ({target}) => {
                     stop(".feature");
+                    stop(".feature-aura");
 
                     animate({
                         elements: target,
@@ -169,15 +163,15 @@
                             rotate(${target.feature_index/count + orbit_progress}turn)`
                         ]
                     })
-                    .then(options => orbit());
+                    .then(options => {orbit(".feature"); orbit(".feature-aura")});
                 });
             }
 
         }
 
         stars();
-        spin_start().then(init_listeners).then(orbit);
-
+        spin_start(".feature").then(() => {init_listeners(); orbit(".feature");});
+        spin_start(".feature-aura").then(() => orbit(".feature-aura"));
 
     </script>
 
@@ -192,8 +186,17 @@
         <a href="{{ feature.destination }}">
                 <img src="{{ feature.image }}" width="{{ feature.width }}px"
                      height="{{ feature.height }}px" class="feature"
-                     style="position: fixed">
+                     style="position: fixed; {{ feature.style }}">
         </a>
+        <span class="feature-aura" width="{{ feature.width }}px"
+             height="{{ feature.height }}px" style="position: fixed">
+            <span style="background: {{ feature.aura }};
+                         width: 1px;
+                         height: 1px;
+                         transform: translate({{ feature.aura_size }}px, {{ feature.aura_size }}px);
+                         border-radius: 1000px;
+                         box-shadow: 0 0 100px 40px {{ feature.aura }}"></span>
+        </span>
         {% endfor %}
 
         <img src="{% static 'pieter/faceless.png' %}" width="200px" height="200px" class="head">

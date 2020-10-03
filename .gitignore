@@ -4,6 +4,7 @@
 # folders
 venv/
 project/__pycache__/
+pieter/__pycache__/
 
 # files
 init_secret.sh
