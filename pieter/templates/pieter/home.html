@@ -48,11 +48,11 @@
                 return circle;
             });
 
-            const duration = (index) => 140000 + index * 50;
+            const duration = (index) => 140000 + index * 70;
             const count = 1000;
 
-            const first_stars = stars(count, () => random(0, 100), () => random(0, 100));
-            const perm_stars = stars(count, () => 105, () => random(0, 100));
+            const first_stars = stars(count, () => random(-10, 110), () => random(-10, 110));
+            const perm_stars = stars(count, () => 110, () => random(-10, 110));
 
             document.body.append(...first_stars);
             document.body.append(...perm_stars);
@@ -62,7 +62,7 @@
                 elements: first_stars,
                 easing: "linear",
                 duration: duration,
-                transform: [`translate(0vw, 0vh)`, `translate(-100vw, 0)`]
+                transform: [`translate(0vw, 0vh)`, `translate(-120vw, 0)`]
             });
             // animate perm_stars
             animate({
@@ -71,7 +71,7 @@
                 delay: index => index / count * duration(count/2),
                 duration: duration,
                 loop: true,
-                transform: [`translate(0vw, 0vh)`, `translate(-110vw, 0)`]
+                transform: [`translate(0vw, 0vh)`, `translate(-120vw, 0)`]
             });
 
         }
@@ -196,7 +196,7 @@
                          height: 0px;
                          transform: translate({{ feature.aura_size }}px, {{ feature.aura_size }}px);
                          border-radius: 1000px;
-                         box-shadow: 0 0 80px 30px {{ feature.aura }}"></span>
+                         box-shadow: 0 0 100px 50px {{ feature.aura }}"></span>
         </span>
         {% endfor %}
 
