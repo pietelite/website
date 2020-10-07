@@ -5,202 +5,43 @@
     <meta charset="UTF-8">
     <title>Pieter Svenson</title>
 
+    <meta property="og:site_name" content="Pieter Svenson"/>
+    <meta property="og:title" content="Pieter Svenson"/>
+
+    <meta name="keywords" content="resume, engineer, student, software.">
+    <meta name="description" property="og:description" content="
+        I'm a Computer Engineering and Structural Engineering student
+        out of the University of Illinois. Feel free to reach out!
+        "/>
+    <meta property="og:image" content="{% static 'pieter/faceless.png' %}">
+    <meta property="og:url" content="https://pietersvenson.com">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US" />
+
     <link rel="stylesheet" type="text/css" href="{% static 'pieter/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'pieter/style.css' %}">
-    <script type="module">
-
-        import animate, {stop} from "/static/pieter/animateplus.js"
-
-        var count = {{ feature_count }}
-        var orbit_radius = {{ orbit_radius }}
-        var offset = {{ rough_feature_size }} / 2
-
-        const stars = () => {
-
-            const list = (length, callback) =>
-                Array.from(new Array(length), (hole, index) => callback(index));
-
-            const random = (min, max) =>
-                Math.random() * (max - min) + min;
-
-            const randomColor = () =>
-                `#${palette[Math.floor(random(0, palette.length))]}`;
-
-            const palette = [
-                "FFFFFF",
-                "C5FEF8",
-                "DAF8FF",
-                "FFFCCA",
-                "FAF6AA",
-                "FADFAA"
-            ];
-
-            const stars = (count, left_fun, top_fun) => list(count, () => {
-                const circle = document.createElement("span");
-                const size = random(1, 3);
-                Object.assign(circle.style, {
-                    width: `${size}px`,
-                    height: `${size}px`,
-                    left: `${left_fun()}vw`,
-                    top: `${top_fun()}vh`,
-                    background: randomColor()
-                    });
-                return circle;
-            });
-
-            const duration = (index) => 140000 + index * 70;
-            const count = 1000;
-
-            const first_stars = stars(count, () => random(-10, 110), () => random(-10, 110));
-            const perm_stars = stars(count, () => 110, () => random(-10, 110));
-
-            document.body.append(...first_stars);
-            document.body.append(...perm_stars);
-
-            // animate first_stars
-            animate({
-                elements: first_stars,
-                easing: "linear",
-                duration: duration,
-                transform: [`translate(0vw, 0vh)`, `translate(-120vw, 0)`]
-            });
-            // animate perm_stars
-            animate({
-                elements: perm_stars,
-                easing: "linear",
-                delay: index => index / count * duration(count/2),
-                duration: duration,
-                loop: true,
-                transform: [`translate(0vw, 0vh)`, `translate(-120vw, 0)`]
-            });
-
-        }
-
-        const transform_feature = index => [`
-            translate(${-offset}px, ${-offset}px)
-            rotate(${-index/count + 1 - orbit_start_progress}turn)
-            translate(${orbit_radius}px)
-            rotate(${index/count + orbit_start_progress}turn`,`
-
-            translate(${-offset}px, ${-offset}px)
-            rotate(${-index/count - orbit_start_progress}turn)
-            translate(${orbit_radius}px)
-            rotate(${index/count + 1 + orbit_start_progress}turn)`
-        ]
-
-        const spin_start = (css_class) => animate({
-            elements: css_class,
-            duration: 1000,
-            easing: "in-out-cubic",
-            transform: transform_feature,
-        });
-
-        var orbit_start_progress = 0
-        var orbit_progress = 0
-
-        const orbit = (css_class, options={}) => animate({
-            elements: css_class,
-            duration: {{ orbit_speed }},
-            easing: "linear",
-            loop: true,
-            transform: transform_feature,
-            change: p => {
-                if (orbit_progress > 1) {
-                    orbit_progress -= 1
-                } else {
-                    orbit_progress = p + orbit_start_progress
-                }
-            }
-        });
-
-        const init_listeners = () => {
-            var feature_elements = document.getElementsByClassName("feature");
-            for (var i = 0; i < feature_elements.length; i++) {
-                feature_elements[i].feature_index = i;
-                feature_elements[i].addEventListener("mouseover", ({target}) => {
-                    orbit_start_progress = orbit_progress
-                    stop(".feature");
-                    stop(".feature-aura");
-
-                    animate({
-                        elements: target,
-                        duration: 1500,
-                        easing: "out-elastic 1.3 0.3",
-                        transform: [`
-                            translate(${-offset}px, ${-offset}px)
-                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
-                            translate(${orbit_radius}px)
-                            scale(1)
-                            rotate(${target.feature_index/count + orbit_progress}turn)`,`
-
-                            translate(${-offset}px,  ${-offset}px)
-                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
-                            translate(${orbit_radius}px)
-                            scale(1.6)
-                            rotate(${target.feature_index/count + orbit_progress}turn)`
-                        ]
-                    });
-
-                });
-                feature_elements[i].addEventListener("mouseout", ({target}) => {
-                    stop(".feature");
-                    stop(".feature-aura");
-
-                    animate({
-                        elements: target,
-                        easing: "out-cubic",
-                        duration: 300,
-                        transform: [`
-                            translate(${-offset}px, ${-offset}px)
-                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
-                            translate(${orbit_radius}px)
-                            scale(1.6)
-                            rotate(${target.feature_index/count + orbit_progress}turn)`,`
-
-                            translate(${-offset}px, ${-offset}px)
-                            rotate(${-target.feature_index/count + 1 - orbit_progress}turn)
-                            translate(${orbit_radius}px)
-                            scale(1)
-                            rotate(${target.feature_index/count + orbit_progress}turn)`
-                        ]
-                    })
-                    .then(options => {orbit(".feature"); orbit(".feature-aura")});
-                });
-            }
-
-        }
-
-        stars();
-        spin_start(".feature").then(() => {init_listeners(); orbit(".feature");});
-        spin_start(".feature-aura").then(() => orbit(".feature-aura"));
-
-    </script>
+   <script type="module" src="{% static 'pieter/float.js' %}"></script>
 
 
 </head>
 <body>
 
-<div style="width: 100%; height: 100%; position: fixed">
-    <div style="position: fixed; transform: translate(50vw, 50vh)">
-
+<div id="universe">
+    <div id="pieter-system">
+        <img id="pieter-head" src="{% static 'pieter/faceless.png' %}" width="200px" height="200px">
         {% for feature in features %}
-        <a href="{{ feature.destination }}">
-                <img src="{{ feature.image }}" width="{{ feature.width }}px"
-                     height="{{ feature.height }}px" class="feature"
-                     style="position: fixed; {{ feature.style }}">
-        </a>
-        <span class="feature-aura" width="{{ feature.width }}px"
-             height="{{ feature.height }}px" style="position: fixed">
-            <span style="background: {{ feature.aura }};
-                         width: 0px;
-                         height: 0px;
-                         transform: translate({{ feature.aura_size }}px, {{ feature.aura_size }}px);
-                         border-radius: 1000px;
-                         box-shadow: 0 0 100px 50px {{ feature.aura }}"></span>
-        </span>
+        <div class="feature-container">
+            <a href="{{ feature.destination }}">
+                <img class="feature-img"
+                     src="{{ feature.image }}"
+                     width="{{ feature.width }}px"
+                     height="{{ feature.height }}px"
+                     style="top: {{ feature.y_offset }}; left: {{ feature.x_offset }}">
+            </a>
+            <span class="feature-aura"
+                  style="box-shadow: 0 0 100px 50px {{ feature.aura }}"></span>
+        </div>
         {% endfor %}
-
-        <img src="{% static 'pieter/faceless.png' %}" width="200px" height="200px" class="head">
     </div>
 </div>
 

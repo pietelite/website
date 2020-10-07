@@ -9,7 +9,7 @@ features  = [
         'width': 70,
         'height': 90,
         'destination': 'https://stackoverflow.com/users/11912161/pieter-svenson',
-        'aura': '#FF9900'
+        'aura': '#EE8800'
     },
     {
         'name': 'LinkedIn',
@@ -17,15 +17,7 @@ features  = [
         'width': 80,
         'height': 80,
         'destination': 'https://www.linkedin.com/in/pietersvenson',
-        'aura': '#0072b1'
-    },
-    {
-        'name': 'PlanSite',
-        'image': static_folder + 'pieter/hexagon.png',
-        'width': 90,
-        'height': 105,
-        'destination': 'https://www.plansite3d.com',
-        'aura': 'yellow'
+        'aura': '#005192'
     },
     {
         'name': 'Email',
@@ -33,7 +25,15 @@ features  = [
         'width': 110,
         'height': 110,
         'destination': 'mailto:pieter2@illinois.edu',
-        'aura': 'green'
+        'aura': '#00892A'
+    },
+    {
+        'name': 'PlanSite',
+        'image': static_folder + 'pieter/hexagon.png',
+        'width': 90,
+        'height': 105,
+        'destination': 'https://www.plansite3d.com',
+        'aura': '#5C0093'
     },
     {
         'name': 'GitHub',
@@ -47,3 +47,5 @@ features  = [
 
 for feature in features:
     feature['aura_size'] = max(feature['width'], feature['height'])/2
+    feature['x_offset'] = -feature['width']/2
+    feature['y_offset'] = -feature['height']/2
