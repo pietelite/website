@@ -38,7 +38,8 @@ const STAR_PALETTE = [
     "FADFAA"
 ];
 
-const has_cursor = window.matchMedia("(hover:hover)").matches;
+// Change this name
+const has_cursor = !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
