@@ -38,7 +38,7 @@ const STAR_PALETTE = [
     "FADFAA"
 ];
 
-const has_cursor = window.matchMedia("pointer") != "none";
+const has_cursor = window.matchMedia("(hover:hover)").matches;
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
