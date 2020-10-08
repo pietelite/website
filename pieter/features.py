@@ -49,7 +49,7 @@ feature_pool = {
         'height': 100,
         'destination': 'https://www.github.com/pietelite',
         'aura': '#BD0000',
-        'description': ['Hosting service for source code and version control']
+        'description': ['My code respositories, including the one for this website']
     },
     'instagram': {
         'name': 'Instagram',
