@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Comfortaa';
+  src: URL('./font/Comfortaa-Medium.ttf') format('truetype');
+}
+
 body {
   margin: 0;
   overflow: hidden;
@@ -12,7 +17,7 @@ span {
   z-index: -1;
 }
 
-p {
+/* p {
   width: 100%;
   top: 45%;
   text-align: center;
@@ -20,6 +25,25 @@ p {
   color: #2E2C33;
   pointer-events: none;
   -webkit-user-select: none;
+} */
+
+#welcome {
+    position: absolute;
+    width: 100vw;
+    top: 50vh;
+    left: 50vw;
+    display: none;
+}
+
+#welcome h1 {
+    position: relative;
+    font-family: 'Comfortaa', cursive;
+    font-size: 5em;
+    color: #E0E0E0;
+    top: -0.5em;
+    left: -50%;
+    /* width: 100vw; */
+    text-align: center;
 }
 
 #universe {
@@ -64,26 +88,26 @@ p {
     position: absolute;
     background: #D0D0D0;
     opacity: 0;
-    width: 400px;
-    border-radius: 20px;
+    border-radius: 30px;
     z-index: 10000;
+    /* width defined in javascript */
 }
 
     .feature-text h2 {
         position: relative;
         color: #101010;
-        margin: 30px;
-        font-size: 35px;
+        margin: 10% 10% 10% 10%;
+        font-size: 2rem;
         font-family: 'Comfortaa', cursive;
-        border-radius: 10px;
+        border-radius: 20px;
     }
     .feature-text .feature-description {
-        padding: 0 30px 30px 30px;
+        padding: 0 10% 10% 10%;
     }
         .feature-text .feature-description p {
             position: relative;
-            padding-top: 5px;
-            font-size: 20px;
+            padding-top: 1rem;
+            font-size: 1.5rem;
             font-family: 'Comfortaa', cursive;
             text-align: left;
             color: #101010;

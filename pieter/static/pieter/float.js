@@ -157,6 +157,17 @@ const float = (config) => {
     const feature_links = document.getElementsByClassName("feature-link");
     const feature_count = feature_containers.length;
 
+    let shift_system_x_offset = 0;
+    let shift_system_y_offset = 0;
+
+    if (window.innerWidth > window.innerHeight) {
+        shift_system_x_offset = Math.floor((window.innerWidth - ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
+    } else {
+        shift_system_y_offset = Math.floor((window.innerHeight - ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
+    }
+
+
+
     if (!has_cursor) {
         for (let i = 0; i < feature_links.length; i++) {
             // remove the hyperlink on the images
@@ -170,15 +181,19 @@ const float = (config) => {
                 textAlign: "center",
                 background: `${feature_auras[i].style.background}`,
                 color: "#e0e0e0",
-                margin: "20px 40px 20px 40px",
-                padding: "10px"
+                margin: "4% 15% 4% 15%",
+                padding: "4%",
+                fontSize: "2em",
             });
-
-        }
-        for (let i = 0; i < feature_text_description_lines.length; i++) {
-            Object.assign(feature_text_description_lines[i].style, {
-                textAlign: "center"
-            });
+            Object.assign(feature_text_descriptions[i].style, {
+                padding: "0 10% 10% 10%"
+            })
+            for (let i = 0; i < feature_text_description_lines.length; i++) {
+                Object.assign(feature_text_description_lines[i].style, {
+                    textAlign: "center",
+                    fontSize: "1.8em"
+                });
+            }
         }
     }
 
@@ -242,15 +257,6 @@ const float = (config) => {
         transform: index => transform_feature(index, 1, 1, 0, 1),
     });
 
-    let shift_system_x_offset = 0;
-    let shift_system_y_offset = 0;
-
-    if (window.innerWidth > window.innerHeight) {
-        shift_system_x_offset = Math.floor((window.innerWidth - ORBIT_RADIUS*2) / 3)
-    } else {
-        shift_system_y_offset = Math.floor((window.innerHeight - ORBIT_RADIUS*2) / 3)
-    }
-
     const shift_system = () => {
         animate({
             elements: "#pieter-system",
@@ -281,35 +287,73 @@ const float = (config) => {
      * =====|
      */
 
-    let top_offset = 0;
-    let left_offset = 0;
+    const welcome_message = document.getElementById("welcome");
+
+    const show_welcome = () => {
+        let animate_ret = animate({
+            elements: "#welcome",
+            easing: "linear",
+            duration: SHOW_DURATION,
+            opacity: [0, 1]
+        });
+        delay(SHOW_DURATION / 10).then(() => welcome_message.style.display = "block");
+        return animate_ret;
+    }
+
+    const hide_welcome = () => new Promise(() => {
+        animate({
+            elements: "#welcome",
+            easing: "linear",
+            duration: SHOW_DURATION,
+            opacity: [1, 0]
+        }).then(() => welcome_message.style.display = "none");
+    });
+
+    let text_width = 0;
+    let min_width = 225;
+    let text_top_offset = 0;
+    let text_left_offset = 0;
     if (window.innerWidth > window.innerHeight) {
-        top_offset = window.innerHeight * 0.40;
-        left_offset = window.innerWidth/2 + (window.innerWidth/2 - ORBIT_RADIUS + shift_system_x_offset - 400) / 2;
+        text_width = Math.max(Math.floor((window.innerWidth/2 - ORBIT_RADIUS + shift_system_x_offset) * 0.5), min_width);
+        text_top_offset = window.innerHeight * 0.35;
+        text_left_offset = (window.innerWidth*3/2 + ORBIT_RADIUS - shift_system_x_offset - text_width)/2;
+        text_left_offset += 40; // arbitrary to attempt to center based on general feature img size
     } else {
-        top_offset = Math.max(window.innerHeight * 2/3, window.innerHeight / 2 + ORBIT_RADIUS - shift_system_y_offset + 100);
-        left_offset = (window.innerWidth - 400) / 2;
+        text_width = Math.floor(window.innerWidth * 0.7);
+        text_top_offset = Math.max(window.innerHeight * 2/3, window.innerHeight / 2 + ORBIT_RADIUS - shift_system_y_offset + 100);
+        text_left_offset = (window.innerWidth - text_width) / 2;
     }
 
     for (let i = 0; i < feature_texts.length; i++) {
-        Object.assign(feature_texts[i].style, {top: `${top_offset}px`, left: `${left_offset}px`});
+        Object.assign(feature_texts[i].style, {
+            top: `${text_top_offset}px`,
+            left: `${text_left_offset}px`,
+            width: `${text_width}px`,
+            display: "none"
+        });
     }
 
-    const show_text = (element) => animate({
-        elements: element,
-        duration: 300,
-        easing: "linear",
-        opacity: [0, 0.8]
-    });
+    const show_text = (element) => {
+        element.style.display = "block";
+        return animate({
+            elements: element,
+            duration: 300,
+            easing: "linear",
+            opacity: [0, 0.8]
+        });
+    }
 
 
-    const hide_text = (element) => animate({
-        elements: element,
-        duration: 300,
-        easing: "linear",
-        opacity: [0.8, 0]
-    });
-
+    const hide_text = (element) => {
+        return new Promise(() => {
+            animate({
+                elements: element,
+                duration: 300,
+                easing: "linear",
+                opacity: [0.8, 0]
+            }).then(() => element.style.display = "none");
+        });
+    }
 
     /*
      * ==========|
@@ -360,11 +404,19 @@ const float = (config) => {
         }
     }
 
-    delay(500).then(() => show_nucleus().then(() => {
-        shift_system();
-        show_features();
-        spin_start().then(() => {init_listeners(); orbit(); show_stars(); float_stars();});
-    }));
+    delay(500).then(() => show_welcome().then(() => delay(500).then(() => {
+        hide_welcome();
+        show_nucleus().then(() => {
+            shift_system();
+            show_features();
+            spin_start().then(() => {
+                init_listeners();
+                orbit();
+                show_stars();
+                float_stars();
+            });
+        })
+    })));
 
 
 }
