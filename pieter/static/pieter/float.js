@@ -1,9 +1,12 @@
 import animate, {stop, delay} from "/static/pieter/animateplus.js"
 
+/* duration of time to show elements sequentially, in milliseconds */
+const SHOW_DURATION = 1000;
+
 const STAR_SIZE_RANGE = [0.5, 8];
 
 /* (per thousand pixels squared (1 mil pixels)) */
-const STAR_DENSITY = 300;
+const STAR_DENSITY = 50;
 
 /* (pixels per second) */
 const STAR_SPEED_RANGE = [5, 32];
@@ -24,9 +27,6 @@ const ORBIT_RADIUS = 200;
 
 const ORBIT_SPEED = 1;
 const ORBIT_SPEED_INIT_SPIN = 25
-
-/* duration of time to show elements sequentially, in milliseconds */
-const SHOW_DURATION = 1000; /* 1000 */
 
 /* possible star colors */
 const STAR_PALETTE = [
@@ -405,6 +405,30 @@ const float = (config) => {
         }
     }
 
+    /*
+     * ============|
+     * SOURCE CODE |
+     * ============|
+     */
+
+    const show_source = () => {
+        let source_img = document.getElementById("source-img");
+        let source_aura = document.getElementById("source-aura");
+        animate({
+            elements: source_img,
+            easing: "linear",
+            duration: SHOW_DURATION,
+            opacity: [0, 1]
+        });
+        animate({
+            elements: source_aura,
+            easing: "linear",
+            duration: SHOW_DURATION,
+            opacity: [0, 1]
+        });
+    }
+
+    /* 'main' */
     delay(500).then(() => show_welcome().then(() => delay(500).then(() => {
         hide_welcome();
         show_nucleus().then(() => {
@@ -414,6 +438,7 @@ const float = (config) => {
                 init_listeners();
                 orbit();
                 show_stars();
+                show_source();
                 float_stars();
             });
         })

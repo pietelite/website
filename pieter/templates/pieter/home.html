@@ -22,10 +22,8 @@
     <meta name="twitter:card" content="Just an aspiring software engineer out of Boston">
     <meta name="twitter:description" content="Just an aspiring software engineer out of Boston">
     <meta name="twitter:image" content="{% static 'pieter/faceless.png' %}">
-    <!-- <meta name="twitter:site" content="@publisher_handle"> -->
-    <!-- <meta name="twitter:creator" content="@author_handle"> -->
 
-    <meta property="snapchat:sticker" content="{% static 'pieter/faceless-small.png' %}">
+    <meta property="snapchat:sticker" content="{% static 'pieter/faceless-circle.png' %}">
 
     <link rel="icon" href="{% static 'pieter/faceless-small.png' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'pieter/bootstrap.min.css' %}">
@@ -45,12 +43,18 @@
         <img id="pieter-head" src="{% static 'pieter/faceless.png' %}" width="200px" height="200px">
         {% for feature in features %}
         <div class="feature-container" feature_id="{{ feature.name }}">
-            <a class="feature-link" href="{{ feature.destination }}">
+            {% if feature.download == True %}
+            <a class="feature-link" href="{{ feature.destination }}" target="_self" download="pietersvenson-resume">
+            {% elif feature.new_tab == True %}
+            <a class="feature-link" href="{{ feature.destination }}" target="_blank">
+            {% else %}
+            <a class="feature-link" href="{{ feature.destination }}" target="_self">
+            {% endif %}
                 <img class="feature-img"
                      src="{{ feature.image }}"
                      width="{{ feature.width }}px"
                      height="{{ feature.height }}px"
-                     feature_id="{{ feature.name }}"
+                     feature_id="{{ feature.id }}"
                      style="top: {{ feature.y_offset }}; left: {{ feature.x_offset }}">
             </a>
             <span class="feature-aura"
@@ -59,7 +63,7 @@
         {% endfor %}
     </div>
     {% for feature in features %}
-    <div class="feature-text" feature_id="{{ feature.name }}">
+    <div class="feature-text" feature_id="{{ feature.id }}">
         <a href="{{ feature.destination }}">
             <h2 class="feature-header">{{ feature.name }}</h2>
         </a>
@@ -70,6 +74,14 @@
         </div>
     </div>
     {% endfor %}
+    <div class="source">
+        <div class="source-bundle">
+            <a href='https://github.com/pietelite/website' target="_blank">
+                <img id="source-img" src="{% static 'pieter/source.png' %}" width=50 height=50>
+                <span id="source-aura"></span>
+            </a>
+        </div>
+    </div>
 </div>
 
 </body>
