@@ -1,5 +1,5 @@
 
-export const FEATURES = ["stackoverflow", "linkedin", "email", "plansite",
+export const FEATURES = [/*"stackoverflow", */"linkedin", "email", "plansite",
     "github", "resume"];
 
 /* duration of time to show elements sequentially, in milliseconds */
