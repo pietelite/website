@@ -1,45 +1,8 @@
-import animate, {stop, delay} from "/static/pieter/animateplus.js"
+import animate, {stop, delay} from "./animateplus.js"
+import {features} from "./features.js"
+import * as config from "./config.js"
 
-/* duration of time to show elements sequentially, in milliseconds */
-const SHOW_DURATION = 1000;
-
-const STAR_SIZE_RANGE = [0.5, 8];
-
-/* (per thousand pixels squared (1 mil pixels)) */
-const STAR_DENSITY = 50;
-
-/* (pixels per second) */
-const STAR_SPEED_RANGE = [5, 32];
-
-/* [0:1]
- * A higher size variation means more
- * variation in which stars show in front of others
- */
-const STAR_ZINDEX_VARIATION = 0.1;
-
-/* [0:1]
- * A higher speed variation means more variation of speed
- * in stars of the same size.
- */
-const STAR_SPEED_VARIATION = 0.5;
-
-const ORBIT_RADIUS = 200;
-
-const ORBIT_SPEED = 1;
-const ORBIT_SPEED_INIT_SPIN = 25
-
-/* possible star colors */
-const STAR_PALETTE = [
-    "FFFFFF",
-    "C5FEF8",
-    "DAF8FF",
-    "FFFCCA",
-    "FAF6AA",
-    "FADFAA"
-];
-
-// Change this name
-const has_cursor = !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+const is_mobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
@@ -47,7 +10,66 @@ const vary = (value, variation) => value * random(1-variation/2, 1+variation/2);
 
 const ratio = (value, min, max) => (value - min) / (max - min);
 
-const float = (config) => {
+const add_features = () => {
+    let universe = document.getElementById("universe");
+    let system = document.getElementById("pieter-system");
+    let feature;
+    for (feature of features) {
+        if (config.FEATURES.includes(feature.id)) {
+            var container = document.createElement("div");
+            container.classList.add("feature-container");
+
+            var img_link = document.createElement("a");
+            img_link.classList.add("feature-link");
+            img_link.href = feature.destination;
+            img_link.target = (feature.new_tab ? "_blank" : "_self");
+            if (feature.download) img_link.download = "";
+
+            var img = document.createElement("img");
+            img.classList.add("feature-img");
+            img.src = `${feature.image}`;
+            img.width = feature.width;
+            img.height = feature.height;
+            img.style=`top: ${feature.y_offset}; left: ${feature.x_offset}`;
+
+            var aura = document.createElement("span");
+            aura.classList.add("feature-aura");
+            aura.style = `box-shadow: 0 0 100px 50px ${feature.aura}; background: ${feature.aura}`;
+
+            img_link.appendChild(img);
+            container.appendChild(img_link);
+            container.appendChild(aura);
+            system.appendChild(container);
+
+            var text = document.createElement("div");
+            text.classList.add("feature-text");
+
+            var text_link = document.createElement("a");
+            text_link.href = feature.destination;
+
+            var text_header = document.createElement("h2");
+            text_header.classList.add("feature-header");
+            text_header.innerHTML = feature.name;
+
+            var text_description = document.createElement("div");
+            text_description.classList.add("feature-description");
+
+            var line;
+            for (line of feature.description) {
+                var paragraph = document.createElement("p");
+                paragraph.classList.add("feature-description-line");
+                paragraph.innerHTML = line;
+                text_description.appendChild(paragraph);
+            }
+            text_link.appendChild(text_header);
+            text.appendChild(text_link);
+            text.appendChild(text_description);
+            universe.appendChild(text);
+        }
+    }
+}
+
+const float = () => {
 
     /*
      * ======|
@@ -58,29 +80,29 @@ const float = (config) => {
     const generate_stars = (count, left_pos, top_pos, visible) =>
         Array.from({length: count}, (_, index) => {
             var circle = document.createElement("span");
-            const size = random(STAR_SIZE_RANGE[1], STAR_SIZE_RANGE[0]);
+            const size = random(config.STAR_SIZE_RANGE[1], config.STAR_SIZE_RANGE[0]);
             Object.assign(circle.style, {
                 position: 'absolute',
                 width: `${size}px`,
                 height: `${size}px`,
                 left: `${left_pos()}vw`,
                 top: `${top_pos()}vh`,
-                background: `#${STAR_PALETTE[Math.floor(random(0, STAR_PALETTE.length))]}`,
+                background: `#${config.STAR_PALETTE[Math.floor(random(0, config.STAR_PALETTE.length))]}`,
                 visibility: (visible ? 'visible' : 'hidden'),
-                zIndex: Math.floor(vary(ratio(size, STAR_SIZE_RANGE[0], STAR_SIZE_RANGE[1]) * star_count, STAR_ZINDEX_VARIATION)),
+                zIndex: Math.floor(vary(ratio(size, config.STAR_SIZE_RANGE[0], config.STAR_SIZE_RANGE[1]) * star_count, config.STAR_ZINDEX_VARIATION)),
                 opacity: 0
                 });
             Object.assign(circle, {
                 class: 'star',
                 size: size,
-                speed: Math.floor(random(STAR_SPEED_RANGE[0], STAR_SPEED_RANGE[1])),
+                speed: Math.floor(random(config.STAR_SPEED_RANGE[0], config.STAR_SPEED_RANGE[1])),
                 show: () => circle.style.visibility = 'visible',
                 hide: () => circle.style.visibility = 'hidden'
             });
             return circle;
         });
 
-    const star_count = Math.round(STAR_DENSITY * window.innerHeight * window.innerWidth / 1000000);
+    const star_count = Math.round(config.STAR_DENSITY * window.innerHeight * window.innerWidth / 1000000);
 
     const orig_stars = generate_stars(star_count, () => random(0, 100), () => random(0, 100), true);
     const perm_stars = generate_stars(star_count, () => 100, () => random(0, 100), false);
@@ -89,26 +111,26 @@ const float = (config) => {
     document.getElementById("universe").append(...perm_stars);
 
     const duration_fun = (size) => {
-        const star_size_ratio = (size - STAR_SIZE_RANGE[0]) / (STAR_SIZE_RANGE[1] - STAR_SIZE_RANGE[0]);
-        const star_speed = (STAR_SPEED_RANGE[1] - STAR_SPEED_RANGE[0]) * star_size_ratio + STAR_SPEED_RANGE[0];
+        const star_size_ratio = (size - config.STAR_SIZE_RANGE[0]) / (config.STAR_SIZE_RANGE[1] - config.STAR_SIZE_RANGE[0]);
+        const star_speed = (config.STAR_SPEED_RANGE[1] - config.STAR_SPEED_RANGE[0]) * star_size_ratio + config.STAR_SPEED_RANGE[0];
         return window.innerWidth / star_speed;
     }
 
-    const duration_fun_var = (size) => vary(duration_fun(size), STAR_SPEED_VARIATION)
+    const duration_fun_var = (size) => vary(duration_fun(size), config.STAR_SPEED_VARIATION)
 
-    const avg_duration = window.innerWidth * 2 / (STAR_SPEED_RANGE[1] + STAR_SPEED_RANGE[0])
+    const avg_duration = window.innerWidth * 2 / (config.STAR_SPEED_RANGE[1] + config.STAR_SPEED_RANGE[0])
 
     const show_stars = () => {
         animate({
             elements: orig_stars,
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [0, 1]
         });
         animate({
             elements: perm_stars,
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [0, 1]
         });
     };
@@ -162,14 +184,14 @@ const float = (config) => {
     let shift_system_y_offset = 0;
 
     if (window.innerWidth > window.innerHeight) {
-        shift_system_x_offset = Math.floor((window.innerWidth - ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
+        shift_system_x_offset = Math.floor((window.innerWidth - config.ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
     } else {
-        shift_system_y_offset = Math.floor((window.innerHeight - ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
+        shift_system_y_offset = Math.floor((window.innerHeight - config.ORBIT_RADIUS*2) / 3) // arbitrary divide by 3
     }
 
 
 
-    if (!has_cursor) {
+    if (!!is_mobile) {
         for (let i = 0; i < feature_links.length; i++) {
             // remove the hyperlink on the images
             var wrap = document.createElement("span");
@@ -201,13 +223,13 @@ const float = (config) => {
     const show_nucleus = () => animate({
         elements: "#pieter-head",
         easing: "linear",
-        duration: SHOW_DURATION,
+        duration: config.SHOW_DURATION,
         opacity: [0, 1]
     });
 
     const init_spin_easing_duration = {
         easing: "in-out-quintic",
-        duration: 60 * 1000 / ORBIT_SPEED_INIT_SPIN
+        duration: 60 * 1000 / config.ORBIT_SPEED_INIT_SPIN
     };
 
     const show_features = () => {
@@ -242,12 +264,12 @@ const float = (config) => {
 
     const transform_feature = (index, start_scale, end_scale, start_rot, end_rot) => [`
         rotate(${-index/feature_count + 1 - orbit_progress_reset}turn)
-        translate(${ORBIT_RADIUS}px)
+        translate(${config.ORBIT_RADIUS}px)
         scale(${start_scale})
         rotate(${index/feature_count + start_rot + orbit_progress_reset}turn`,`
 
         rotate(${-index/feature_count - orbit_progress_reset}turn)
-        translate(${ORBIT_RADIUS}px)
+        translate(${config.ORBIT_RADIUS}px)
         scale(${end_scale})
         rotate(${index/feature_count + end_rot + 0.001 + orbit_progress_reset}turn)`
     ]
@@ -262,14 +284,14 @@ const float = (config) => {
         animate({
             elements: "#pieter-system",
             easing: "in-out-quartic",
-            duration: 60 * 1000 / ORBIT_SPEED_INIT_SPIN,
+            duration: 60 * 1000 / config.ORBIT_SPEED_INIT_SPIN,
             transform: ["translate(0px, 0px)", `translate(-${shift_system_x_offset}px, -${shift_system_y_offset}px)`]
         });
     }
 
     const orbit = () => animate({
         elements: ".feature-container",
-        duration: 60 * 1000 / ORBIT_SPEED,
+        duration: 60 * 1000 / config.ORBIT_SPEED,
         easing: "linear",
         loop: true,
         transform: index => transform_feature(index, 1, 1, 0, 1),
@@ -294,10 +316,10 @@ const float = (config) => {
         let animate_ret = animate({
             elements: "#welcome",
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [0, 1]
         });
-        delay(SHOW_DURATION / 10).then(() => welcome_message.style.display = "block");
+        delay(config.SHOW_DURATION / 10).then(() => welcome_message.style.display = "block");
         return animate_ret;
     }
 
@@ -305,7 +327,7 @@ const float = (config) => {
         animate({
             elements: "#welcome",
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [1, 0]
         }).then(() => welcome_message.style.display = "none");
     });
@@ -315,13 +337,13 @@ const float = (config) => {
     let text_top_offset = 0;
     let text_left_offset = 0;
     if (window.innerWidth > window.innerHeight) {
-        text_width = Math.max(Math.floor((window.innerWidth/2 - ORBIT_RADIUS + shift_system_x_offset) * 0.5), min_width);
+        text_width = Math.max(Math.floor((window.innerWidth/2 - config.ORBIT_RADIUS + shift_system_x_offset) * 0.5), min_width);
         text_top_offset = window.innerHeight * 0.35;
-        text_left_offset = (window.innerWidth*3/2 + ORBIT_RADIUS - shift_system_x_offset - text_width)/2;
+        text_left_offset = (window.innerWidth*3/2 + config.ORBIT_RADIUS - shift_system_x_offset - text_width)/2;
         text_left_offset += 40; // arbitrary to attempt to center based on general feature img size
     } else {
         text_width = Math.floor(window.innerWidth * 0.7);
-        text_top_offset = Math.max(window.innerHeight * 2/3, window.innerHeight / 2 + ORBIT_RADIUS - shift_system_y_offset + 100);
+        text_top_offset = Math.max(window.innerHeight * 2/3, window.innerHeight / 2 + config.ORBIT_RADIUS - shift_system_y_offset + 100);
         text_left_offset = (window.innerWidth - text_width) / 2;
     }
 
@@ -364,7 +386,7 @@ const float = (config) => {
 
     const init_listeners = () => {
         for (let i = 0; i < feature_imgs.length; i++) {
-            if (has_cursor) {
+            if (!is_mobile) {
                 feature_imgs[i].addEventListener("mouseover", ({target}) => {
                     stop(".feature-container");
                     animate({
@@ -417,13 +439,13 @@ const float = (config) => {
         animate({
             elements: source_img,
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [0, 1]
         });
         animate({
             elements: source_aura,
             easing: "linear",
-            duration: SHOW_DURATION,
+            duration: config.SHOW_DURATION,
             opacity: [0, 1]
         });
     }
@@ -446,5 +468,5 @@ const float = (config) => {
 
 
 }
-
+add_features();
 document.addEventListener("DOMContentLoaded", () => float());

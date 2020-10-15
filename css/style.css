@@ -1,0 +1,138 @@
+@font-face {
+  font-family: 'Comfortaa';
+  src: URL('../font/Comfortaa-Medium.ttf') format('truetype');
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #151215;
+  position: fixed;
+}
+
+span {
+  border-radius: 50%;
+  transform-origin: 0 0;
+  opacity: 1;
+  z-index: -1;
+}
+
+#welcome {
+    position: absolute;
+    width: 100vw;
+    top: 50vh;
+    left: 50vw;
+    display: none;
+}
+
+#welcome h1 {
+    position: relative;
+    font-family: 'Comfortaa', cursive;
+    font-size: 5em;
+    color: #E0E0E0;
+    top: -0.5em;
+    left: -50%;
+    /* width: 100vw; */
+    text-align: center;
+}
+
+#universe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#pieter-system {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    z-index: 10000;
+}
+
+#pieter-head {
+    position: absolute;
+    border-radius: 100px;
+    border: 2px solid white;
+    transform: translate(-50%, -50%);
+    background: #151215;
+    opacity: 0;
+}
+
+    #pieter-system .feature-container
+                   .feature-img {
+        position: absolute;
+        opacity: 0;
+        z-index: 2;
+    }
+    #pieter-system .feature-container
+                   .feature-aura {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border-radius: 1000px;
+        z-index: 1;
+        opacity: 0;
+    }
+
+.feature-text {
+    position: absolute;
+    background: #D0D0D0;
+    opacity: 0;
+    border-radius: 30px;
+    z-index: 10000;
+    /* width defined in javascript */
+}
+
+    .feature-text h2 {
+        position: relative;
+        color: #101010;
+        margin: 10% 10% 10% 10%;
+        font-size: 2rem;
+        font-family: 'Comfortaa', cursive;
+        border-radius: 20px;
+    }
+    .feature-text .feature-description {
+        padding: 0 10% 10% 10%;
+    }
+        .feature-text .feature-description p {
+            position: relative;
+            padding-top: 1rem;
+            font-size: 1.5rem;
+            font-family: 'Comfortaa', cursive;
+            text-align: left;
+            color: #101010;
+            word-wrap: break-word;
+        }
+
+.source {
+    position: absolute;
+    top: 100vh;
+    left: 100vw;
+}
+
+.source .source-bundle {
+    position: absolute;
+    top: -60px;
+    left: -60px;
+}
+
+    .source img {
+        position: absolute;
+        opacity: 0;
+        z-index: 10001;
+        top: -25px;
+        left: -25px;
+    }
+
+    .source span {
+        position: absolute;
+        opacity: 0;
+        z-index: 10000;
+        width: 50px;
+        height: 50px;
+        top: -25px;
+        left: -25px;
+        border-radius: 1000px;
+        box-shadow: 0 0 20px 10px black;
+        background: black;
+    }
