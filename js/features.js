@@ -36,17 +36,17 @@ let linkedin = new Feature("linkedin",
     "LinkedIn", 80, 80,
     "https://www.linkedin.com/in/pietersvenson",
     "#005192",
-    ["Professional social networking account"],
-    false, true)
+    ["Connect on my professional social networking account"],
+    false, true);
 
 let email = new Feature("email",
     "img/mail-white.png",
     "Email", 110, 110,
-    "mailto:pieter2@illinois.edu",
-    "#2A816E",
+    "mailto:pieter.svenson@outlook.com",
+    "#268729",
     ["Send me a message if you want to get in touch",
         "pieter.svenson@outlook.com"],
-    false, true)
+    false, true);
 
 let plansite = new Feature("plansite",
     "img/hexagon.png",
@@ -55,23 +55,31 @@ let plansite = new Feature("plansite",
     "#5C0093",
     ["Start-up in the Civil Engineering industry "
     + "focusing on developing tools for the contracting process"],
-    false, true)
+    false, true);
+
+let whimc = new Feature("whimc",
+    "img/hexagon.png",
+    "WHIMC", 90, 105,
+    "https://whimcproject.web.illinois.edu/about/people/",
+    "#5C0093",
+    ["What-If Hypothetical Implementations in Minecraft"],
+    false, true);
 
 let github = new Feature("github",
     "img/github.png",
     "GitHub", 100, 100,
     "https://www.github.com/pietelite",
     "#BD0000",
-    ["My code respositories, including the one for this website"],
-    false, true)
+    ["Explore my code, including the code for this website"],
+    false, true);
 
 let resume = new Feature("resume",
     "img/paper.png",
     "Resume", 110, 110,
-    "img/pietersvenson-resume.pdf",
+    "pietersvenson-resume.pdf",
     "#DD006B",
     ["Download my latest resume"],
-    true, false)
+    true, false);
 
 let instagram = new Feature("instagram",
     "img/instagram.png",
@@ -79,6 +87,6 @@ let instagram = new Feature("instagram",
     "https://instagram.com/pietelite",
     "#DD006B",
     ["Casual social media account"],
-    false, true)
+    false, true);
 
-export var features = [stackoverflow, linkedin, email, plansite, github, resume, instagram];
+export var features = [stackoverflow, linkedin, email, plansite, whimc, github, resume, instagram];

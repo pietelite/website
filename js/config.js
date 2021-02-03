@@ -1,6 +1,6 @@
 
-export const FEATURES = [/*"stackoverflow", */"linkedin", "email", "plansite",
-    "github", "resume"];
+export const FEATURES = [/*"stackoverflow", */"linkedin",
+    "email", /* plansite, */"whimc", "github", "resume"];
 
 /* duration of time to show elements sequentially, in milliseconds */
 export const SHOW_DURATION = 1000;
@@ -28,7 +28,10 @@ export const STAR_SPEED_VARIATION = 0.5;
 export const ORBIT_RADIUS = 200;
 
 export const ORBIT_SPEED = 1;
-export const ORBIT_SPEED_INIT_SPIN = 25
+export const ORBIT_SPEED_INIT_SPIN = 25;
+
+/* (milliseconds) */
+export const MOBILE_SHOW_DESCRIPTION_DELAY = 3500;
 
 /* possible star colors */
 export const STAR_PALETTE = [

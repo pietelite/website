@@ -191,7 +191,7 @@ const float = () => {
 
 
 
-    if (!!is_mobile) {
+    if (is_mobile) {
         for (let i = 0; i < feature_links.length; i++) {
             // remove the hyperlink on the images
             var wrap = document.createElement("span");
@@ -416,7 +416,7 @@ const float = () => {
                     if (!disabled_feature_click) {
                         show_text(feature_texts[i]).then(() => {
                             disabled_feature_click = true;
-                            delay(2000).then(() => {
+                            delay(config.MOBILE_SHOW_DESCRIPTION_DELAY).then(() => {
                                 disabled_feature_click = false;
                                 hide_text(feature_texts[i])
                             });
